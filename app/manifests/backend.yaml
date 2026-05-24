@@ -20,20 +20,32 @@ spec:
           - sh
           - -c
           - |
-            pip install flask redis && \
-            cat <<EOF > app.py
-            import time, os
-            from flask import Flask
+            pip install flask redis prometheus-flask-exporter && \
+            cat <<'EOF' > app.py
+            from flask import Flask, jsonify
+            from prometheus_flask_exporter import PrometheusMetrics
             import redis
+
             app = Flask(__name__)
-            r = redis.Redis(host='redis', port=6379, socket_connect_timeout=2)
+            metrics = PrometheusMetrics(app)
+            r = redis.Redis(host='redis', port=6379, socket_connect_timeout=2, socket_timeout=2)
+
             @app.route('/')
             def hello():
                 try:
                     r.ping()
-                    return "Backend OK: Podłączono do Redis!\n"
+                    return "Backend OK: Connected to Redis!\n"
                 except Exception as e:
-                    return f"Backend ERROR: Brak połączenia z Redis: {e}\n", 500
+                    return f"Backend ERROR: Cannot connect to Redis: {e}\n", 500
+
+            @app.route('/health')
+            def health():
+                try:
+                    r.ping()
+                    return jsonify(status="ok", redis="connected"), 200
+                except Exception as e:
+                    return jsonify(status="error", redis=str(e)), 500
+
             if __name__ == '__main__':
                 app.run(host='0.0.0.0', port=5000)
             EOF
@@ -42,7 +54,7 @@ spec:
         - containerPort: 5000
         readinessProbe:
           httpGet:
-            path: /
+            path: /health
             port: 5000
           initialDelaySeconds: 10
 ---
@@ -51,8 +63,12 @@ kind: Service
 metadata:
   name: backend
   namespace: demo-app
+  labels:
+    app: backend
 spec:
   ports:
-  - port: 5000
+  - name: http
+    port: 5000
+    targetPort: 5000
   selector:
     app: backend
