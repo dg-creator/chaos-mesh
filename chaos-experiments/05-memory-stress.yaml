@@ -1,7 +1,7 @@
 apiVersion: chaos-mesh.org/v1alpha1
 kind: StressChaos
 metadata:
-  name: backend-cpu-stress
+  name: backend-memory-stress
   namespace: demo-app
 spec:
   mode: one
@@ -11,7 +11,7 @@ spec:
     labelSelectors:
       app: backend
   stressors:
-    cpu:
+    memory:
       workers: 1
-      load: 80
+      size: "64MB"
   duration: "2m"

@@ -1,0 +1,22 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: backend-to-redis-partition
+  namespace: demo-app
+spec:
+  action: partition
+  mode: all
+  selector:
+    namespaces:
+      - demo-app
+    labelSelectors:
+      app: backend
+  direction: to
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - demo-app
+      labelSelectors:
+        app: redis
+  duration: "2m"

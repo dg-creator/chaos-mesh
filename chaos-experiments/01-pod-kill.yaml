@@ -1,18 +1,13 @@
 apiVersion: chaos-mesh.org/v1alpha1
-kind: Schedule
+kind: PodChaos
 metadata:
-  name: schedule-kill-frontend
+  name: kill-one-frontend-pod
   namespace: demo-app
 spec:
-  schedule: '@every 15s'
-  historyLimit: 2
-  concurrencyPolicy: 'Allow'
-  type: 'PodChaos'
-  podChaos:
-    action: pod-kill
-    mode: one
-    selector:
-      namespaces:
-        - demo-app
-      labelSelectors:
-        app: frontend
+  action: pod-kill
+  mode: one
+  selector:
+    namespaces:
+      - demo-app
+    labelSelectors:
+      app: frontend

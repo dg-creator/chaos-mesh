@@ -1,0 +1,26 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: backend-to-redis-latency
+  namespace: demo-app
+spec:
+  action: delay
+  mode: all
+  selector:
+    namespaces:
+      - demo-app
+    labelSelectors:
+      app: backend
+  direction: to
+  target:
+    mode: all
+    selector:
+      namespaces:
+        - demo-app
+      labelSelectors:
+        app: redis
+  delay:
+    latency: "2000ms"
+    correlation: "100"
+    jitter: "0ms"
+  duration: "2m"
