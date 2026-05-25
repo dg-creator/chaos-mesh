@@ -418,14 +418,21 @@ Grafana baseline:
 
 ### Chaos experiments
 
-TODO: add screenshots showing metrics during:
+The project contains five Chaos Mesh experiments:
 
-- pod kill;
-- network partition;
-- latency injection;
-- CPU stress;
-- memory stress;
-- recovery after experiments.
+- pod kill,
+- network partition,
+- latency injection,
+- CPU stress,
+- memory stress.
+
+Each experiment is stored as a separate YAML file in the chaos-experiments/ directory.
+
+The full recovery demo, including commands, expected behavior, observed results and cleanup steps, is described in:
+
+```bash
+docs/recovery-demo.md
+```
 
 ## Conclusions
 

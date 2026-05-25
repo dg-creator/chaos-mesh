@@ -62,6 +62,10 @@ One frontend pod should change to `Terminating`, and a new pod should appear:
 Pending -> ContainerCreating -> Running
 ```
 
+### Observed result
+
+During the test, one frontend pod changed to Terminating. Then Kubernetes created a new pod, which went through Pending -> ContainerCreating -> Running. After recovery, both frontend pods were running again.
+
 ### Cleanup
 
 ```bash
@@ -90,6 +94,12 @@ curl.exe http://localhost:8080
 
 The application may return an error or timeout because backend cannot connect to Redis.
 
+### Observed result
+
+During the network partition test, the application was not reachable from curl. After removing the experiment and starting port-forward again, the application returned a normal response: Backend OK: Podłączono do Redis!.
+
+Note: in this test, port-forward had to be started again to access the application locally.
+
 ### Cleanup
 
 ```bash
@@ -100,6 +110,11 @@ kubectl delete -f chaos-experiments/02-network-partition.yaml
 
 ```bash
 curl.exe http://localhost:8080
+```
+
+connection after port crash
+```bash
+kubectl port-forward -n demo-app svc/frontend 8080:80
 ```
 
 ---
@@ -129,6 +144,10 @@ curl.exe -w "Total time: %{time_total}s\n" -o NUL -s http://localhost:8080
 ### Expected result
 
 The application should still work, but response time should be higher.
+
+### Observed result
+
+Before the experiment, response time was about 0.0127s. During the latency experiment, response time was about 0.0140s. After cleanup, response time was about 0.0113s. In this run, the latency increase was small, but the application stayed available and returned to normal after cleanup.
 
 ### Cleanup
 
@@ -164,6 +183,10 @@ curl.exe http://localhost:8080
 
 Backend should still run, but the application may respond slower.
 
+### Observed result
+
+During the CPU stress experiment, Grafana showed a clear CPU usage spike on one backend pod. After the experiment ended, CPU usage dropped back close to the baseline value.
+
 ### Cleanup
 
 ```bash
@@ -197,6 +220,10 @@ curl.exe http://localhost:8080
 ### Expected result
 
 Backend should still run. If memory usage is too high, the pod may restart.
+
+### Observed result
+
+During the memory stress experiment, Grafana showed a clear memory usage increase on one backend pod, up to about 96 MiB. After the experiment ended, memory usage returned close to the baseline value, around 34 MiB.
 
 ### Cleanup
 
