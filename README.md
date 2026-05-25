@@ -1,5 +1,3 @@
-# chaos-mesh
-Lab-ready chaos engineering environment built with Kubernetes (Kind) and Chaos Mesh for resilience testing of multi-service applications under pod failures, network partitions, latency injection, and CPU/memory stress conditions.
 # Chaos Engineering: Resilience Testing with Chaos Mesh
 
 This project provides a lab-ready environment for testing the resilience of a multi-service application running on Kubernetes. The cluster is created locally with Kind, monitoring is based on Prometheus and Grafana, and failures are injected with Chaos Mesh.
