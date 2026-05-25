@@ -33,7 +33,7 @@ flowchart LR
     Frontend --> Backend["backend<br/>Flask"]
     Backend --> Redis["redis"]
 
-    Prometheus["Prometheus"] --> Metrics["backend /metrics"]
+    Prometheus["Prometheus"] -. "scrapes /metrics" .-> Backend
     Grafana["Grafana"] --> Prometheus
 
     ChaosMesh["Chaos Mesh"] -. "planned experiments" .-> Frontend
